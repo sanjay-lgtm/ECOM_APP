@@ -8,11 +8,13 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productsRoutes.js";
+import path from "path";
 const app = express();
 
 dotenv.config();
 connectDB();
 app.use(morgan("dev"));
+app.use(express.static(path.join(__dirname, "./client/build")));
 //routes
 app.use(cors());
 app.use(bodyParser.json());
@@ -22,12 +24,13 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 
-app.get("/", (req, res) => {
-  res.send({
-    message: "Welcome",
-  });
+//rest api
+
+app.use("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
 
+//port
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
